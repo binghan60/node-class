@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "SET NODE_ENV=production && node src/env-test.js",
-    "dev": "SET NODE_ENV=dev && node src/env-test.js",
+    "start": "SET NODE_ENV=production && node index.js",
+    "dev": "SET NODE_ENV=dev && nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1"
   }
 }
