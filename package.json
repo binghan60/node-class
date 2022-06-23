@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "SET NODE_ENV=production && node src/env-test.js",
+    "dev": "SET NODE_ENV=dev && node src/env-test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
