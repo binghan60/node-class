@@ -32,4 +32,9 @@
     </form>
     <pre><%- JSON.stringify(locals, null, 4) %></pre>
 </div>
-<%- include('parts/scripts') %> <%- include('parts/html-foot') %>
+<%- include('parts/scripts') %> 
+<script>
+    const locals = <%- JSON.stringify(locals) %>;
+</script>
+
+<%- include('parts/html-foot') %>
