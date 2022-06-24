@@ -5,8 +5,19 @@ const app = express();
 
 app.set("view engine", "ejs");
 
-app.get('/try-qs', (req, res)=>{
+// 頂級路由設在最上層,所有資料都會經過這裡
+// Top-level middlewares
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+app.get('/try-qs', (req, res) => {
     res.json(req.query);
+});
+
+// middleware: 中介軟體 (function)
+// const bodyParser = express.urlencoded({extended: false});
+app.post('/try-post', (req, res) => {
+    res.json(req.body);
 });
 
 app.get("/", (req, res) => {
