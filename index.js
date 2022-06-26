@@ -22,7 +22,7 @@ app.get('/try-qs', (req, res) => {
     res.json(req.query);
 });
 
-// middleware: 中介軟體 (function)
+// middleware: 中介軟體 是一個(function)
 // const bodyParser = express.urlencoded({extended: false});
 app.post('/try-post', (req, res) => {
     res.json(req.body);
@@ -47,7 +47,8 @@ app.get('/try-post-form', (req, res)=>{
 app.post('/try-post-form', (req, res)=>{
 });
 */
-
+// 樣板(ejs)要用render 改成從views找
+// 沒設定檔頭預設HTML
 app.get("/", (req, res) => {
     res.render("main", { name: "binghan" });
 });
@@ -55,7 +56,7 @@ app.get("/", (req, res) => {
 
 // 相當於app.use("/", express.static("public"));
 app.use(express.static("public"));
-// 網址列bootstrap/再找
+// 網址列掛在虛擬bootstrap/再找
 app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
 // ------------------404------------------
 // use接收所有的方法,querystring亂打都會來這裡
