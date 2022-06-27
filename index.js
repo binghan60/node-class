@@ -10,6 +10,8 @@ const upload = require(__dirname + '/modules/upload-images');
 // const app = require("express")();
 // app=呼叫function
 const app = express();
+// 區分大小寫
+app.set('case sensitive routing', true);
 
 app.set("view engine", "ejs");
 
@@ -47,18 +49,33 @@ app.post('/try-uploads', upload.array('photos'), (req, res) => {
 });
 
 // 越寬鬆的放越下面,不然會一開始就吃掉全部
-app.get('/try-params1/:action/:id', (req, res)=>{
-    res.json({code:2, params: req.params});
+app.get('/try-params1/:action/:id', (req, res) => {
+    res.json({ code: 2, params: req.params });
 })
-app.get('/try-params1/:action', (req, res)=>{
-    res.json({code:3, params: req.params});
+app.get('/try-params1/:action', (req, res) => {
+    res.json({ code: 3, params: req.params });
 })
-app.get('/try-params1/:action?/:id?', (req, res)=>{
-    res.json({code:1, params: req.params});
+app.get('/try-params1/:action?/:id?', (req, res) => {
+    res.json({ code: 1, params: req.params });
 });
 
+//  /後有包含HI就可以
+app.get(/^\/hi\/?/i, (req, res) => {
+    res.send({ url: req.url });
+});
+app.get(['/aaa', '/bbb'], (req, res) => {
+    res.send({ url: req.url, code: 'array' });
+});
+
+const adminsRouter = require(__dirname + '/routes/admins');
+// prefix 前綴路徑
+app.use('/admins', adminsRouter);
+app.use(adminsRouter);
 
 
+
+
+app.use('/admins', require(__dirname + '/routes/admins'));
 
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
