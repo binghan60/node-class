@@ -2,23 +2,36 @@ require("dotenv").config();
 
 // 拿到一個function
 const express = require("express");
+// multer檔案上傳,dest目的地
 const multer = require('multer');
 // const upload = multer({ dest: 'tmp-uploads' });改用自己寫的
 const upload = require(__dirname + '/modules/upload-images');
+
+const session = require('express-session');
+
 
 // 也可以這樣寫
 // const app = require("express")();
 // app=呼叫function
 const app = express();
 // 區分大小寫
-app.set('case sensitive routing', true);
 
 app.set("view engine", "ejs");
+app.set('case sensitive routing', true);
 
 // 頂級路由設在最上層,所有資料都會經過這裡
 // Top-level middlewares
+app.use(session({
+    saveUninitialized: false,
+    resave: false,
+    secret: 'dkfdl85493igdfigj9457394573irherer',
+}));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use((req, res, next) => {
+    res.locals.shinder = '哈囉';
+    next();
+});
 
 // .get接受get的方法
 app.get('/try-qs', (req, res) => {
@@ -39,11 +52,11 @@ app.route('/try-post-form')
         const { email, password } = req.body;
         res.render('try-post-form', { email, password });
     });
-
+// 欄位名稱 avatar middleware
 app.post('/try-upload', upload.single('avatar'), (req, res) => {
     res.json(req.file);
 });
-
+// 欄位名稱 photos middleware
 app.post('/try-uploads', upload.array('photos'), (req, res) => {
     res.json(req.files);
 });
@@ -71,9 +84,17 @@ const adminsRouter = require(__dirname + '/routes/admins');
 // prefix 前綴路徑
 app.use('/admins', adminsRouter);
 app.use(adminsRouter);
+// app.use('/admins', require(__dirname + '/routes/admins'));
 
 
-app.use('/admins', require(__dirname + '/routes/admins'));
+app.get('/try-session', (req, res) => {
+    req.session.my_var = req.session.my_var || 0;
+    req.session.my_var++;
+    res.json({
+        my_var: req.session.my_var,
+        session: req.session,
+    });
+})
 
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
