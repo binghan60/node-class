@@ -42,12 +42,11 @@ app.post('/try-upload', upload.single('avatar'), (req, res) => {
     res.json(req.file);
 });
 
-/*
-app.get('/try-post-form', (req, res)=>{
+app.post('/try-uploads', upload.array('photos'), (req, res) => {
+    res.json(req.files);
 });
-app.post('/try-post-form', (req, res)=>{
-});
-*/
+
+
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
 app.get("/", (req, res) => {
