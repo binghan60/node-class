@@ -3,7 +3,8 @@ require("dotenv").config();
 // 拿到一個function
 const express = require("express");
 const multer = require('multer');
-const upload = multer({ dest: 'tmp-uploads' });
+// const upload = multer({ dest: 'tmp-uploads' });改用自己寫的
+const upload = require(__dirname + '/modules/upload-images');
 
 // 也可以這樣寫
 // const app = require("express")();
