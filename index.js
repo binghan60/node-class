@@ -46,6 +46,19 @@ app.post('/try-uploads', upload.array('photos'), (req, res) => {
     res.json(req.files);
 });
 
+// 越寬鬆的放越下面,不然會一開始就吃掉全部
+app.get('/try-params1/:action/:id', (req, res)=>{
+    res.json({code:2, params: req.params});
+})
+app.get('/try-params1/:action', (req, res)=>{
+    res.json({code:3, params: req.params});
+})
+app.get('/try-params1/:action?/:id?', (req, res)=>{
+    res.json({code:1, params: req.params});
+});
+
+
+
 
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
