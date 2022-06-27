@@ -73,8 +73,6 @@ app.use('/admins', adminsRouter);
 app.use(adminsRouter);
 
 
-
-
 app.use('/admins', require(__dirname + '/routes/admins'));
 
 // 樣板(ejs)要用render 改成從views找
