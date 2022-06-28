@@ -18,6 +18,8 @@ res.send()
 res.json()
 
 res.render()
+
+res.redirect()
 ------------------------------------
 # RESTful API
 
