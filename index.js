@@ -10,6 +10,11 @@ const upload = require(__dirname + '/modules/upload-images');
 const session = require('express-session');
 const moment = require('moment-timezone');
 
+// sessionStore
+const db = require(__dirname + '/modules/mysql-connect');
+const MysqlStore = require('express-mysql-session')(session);
+const sessionStore = new MysqlStore({}, db);
+
 
 // 也可以這樣寫
 // const app = require("express")();
@@ -27,10 +32,12 @@ app.use(session({
     resave: false,
     secret: 'dkfdl85493igdfigj9457394573irherer',
     // cookie存活時間
+    store: sessionStore,
     cookie: {
         maxAge: 1800000, // 30 min
     }
 }));
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use((req, res, next) => {
@@ -54,8 +61,8 @@ app.route('/try-post-form')
         res.render('try-post-form');
     })
     .post((req, res) => {
-        const { email, password } = req.body;
-        res.render('try-post-form', { email, password });
+        const { email, password, name } = req.body;
+        res.render('try-post-form', { email, password, name });
     });
 // 欄位名稱 avatar middleware
 app.post('/try-upload', upload.single('avatar'), (req, res) => {
@@ -95,7 +102,7 @@ app.get('/try-json', (req, res) => {
     res.render('try-json');
 });
 
-app.get('/try-moment', (req, res)=>{
+app.get('/try-moment', (req, res) => {
     const fm = 'YYYY-MM-DD HH:mm:ss';
     const m1 = moment();
     const m2 = moment('2022-02-28');
