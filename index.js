@@ -133,6 +133,9 @@ app.get('/try-session', (req, res) => {
     });
 })
 
+app.use('/address-book', require(__dirname + '/routes/address-book'));
+
+
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
 app.get("/", (req, res) => {
