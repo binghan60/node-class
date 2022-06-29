@@ -2,9 +2,9 @@ require("dotenv").config();
 
 // 拿到一個function
 const express = require("express");
-// multer檔案上傳,dest目的地
 const multer = require('multer');
-// const upload = multer({ dest: 'tmp-uploads' });改用自己寫的
+// multer檔案上傳,dest目的地
+// const upload = multer({ dest: 'tmp-uploads' });因為藥用storage跟filefilter所以改用自己寫的
 const upload = require(__dirname + '/modules/upload-images');
 
 const session = require('express-session');
