@@ -53,7 +53,7 @@ const getListHandler = async (req, res) => {
             return output;
         }
         // 取得每一頁的資料
-        const sql02 = `SELECT * FROM address_book ${where} LIMIT ${(page - 1) * output.perPage}, ${output.perPage}`;
+        const sql02 = `SELECT * FROM address_book ${where} ORDER BY sid DESC LIMIT ${(page - 1) * output.perPage}, ${output.perPage}`;
         const [r2] = await db.query(sql02);
         r2.forEach(el => el.birthday = toDateString(el.birthday));
         output.rows = r2;
