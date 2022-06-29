@@ -5,14 +5,16 @@
     <div class="row">
         <div class="col-6">
             <form class="d-flex">
-                <input class="form-control" type="date" placeholder="生日起始" name="beginDate">
-                <input class="form-control" type="date" placeholder="生日結束" name="endDate">
+                <input class="form-control" type="date" name="beginDate" 
+                value="<%= query.beginDate ? query.beginDate : '1980-01-01' %>" >
+                <input class="form-control" type="date" name="endDate" 
+                value="<%= query.endDate ? query.endDate : '2000-01-01' %>" >
                 <input
                     class="form-control me-2"
                     type="search"
                     placeholder="Search"
                     name="search"
-                    value="<%= locals.query && query.search ? query.search : '' %>"
+                    value="<%= query.search ? query.search : '' %>"
                 />
                 <button class="btn btn-outline-success" type="submit">
                     Search
@@ -38,6 +40,15 @@
                         if(query.search){
                             obj.search = query.search;
                         }
+
+                        // 換頁時保持搜尋條件
+                        if(query.beginDate){
+                            obj.beginDate = query.beginDate;
+                        }
+                        if(query.endDate){
+                            obj.endDate = query.endDate;
+                        }
+
                         const myLink = new URLSearchParams(obj).toString();
                         %>
                     <li class="page-item <%= page===i ? 'active' : '' %>">

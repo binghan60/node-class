@@ -5,6 +5,7 @@ const {
     toDateString,
     toDatetimeString,
 } = require(__dirname + '/../modules/date-tools');
+const moment = require('moment-timezone');
 
 
 const router = express.Router(); // 建立 router 物件
@@ -23,14 +24,31 @@ const getListHandler = async (req, res) => {
     let page = +req.query.page || 1;
 
     let search = req.query.search || '';
+    let beginDate = req.query.beginDate || '';
+    let endDate = req.query.endDate || '';
     let where = ' WHERE 1 ';
     // 跳脫防攻擊
     if (search) {
         where += ` AND name LIKE ${db.escape('%' + search + '%')} `;
         output.query.search = search;
-        output.showTest = db.escape('%' + search + '%'); // 測試, 查看
     }
 
+    if(beginDate){
+        const mo = moment(beginDate);
+        if(mo.isValid()){
+            where += ` AND birthday >= '${mo.format('YYYY-MM-DD')}' `;
+            output.query.beginDate = mo.format('YYYY-MM-DD');
+        }
+    }
+    if(endDate){
+        const mo = moment(endDate);
+        if(mo.isValid()){
+            where += ` AND birthday <= '${mo.format('YYYY-MM-DD')}' `;
+            output.query.endDate = mo.format('YYYY-MM-DD');
+        }
+    }
+
+    output.showTest = where;
 
     if (page < 1) {
         output.code = 410;
@@ -64,6 +82,10 @@ const getListHandler = async (req, res) => {
     output = { ...output, page, totalRows, totalPages };
     return output;
 };
+
+router.get('/add', async (req, res)=>{
+    res.render('address-book/add');
+});
 
 router.get('/', async (req, res) => {
     const output = await getListHandler(req, res);
