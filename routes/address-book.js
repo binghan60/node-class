@@ -6,6 +6,7 @@ const {
     toDatetimeString,
 } = require(__dirname + '/../modules/date-tools');
 const moment = require('moment-timezone');
+const upload = require(__dirname + '/../modules/upload-images')
 
 
 const router = express.Router(); // 建立 router 物件
@@ -85,6 +86,10 @@ const getListHandler = async (req, res) => {
 
 router.get('/add', async (req, res)=>{
     res.render('address-book/add');
+});
+
+router.post('/add', upload.none(), async (req, res)=>{
+    res.json(req.body);
 });
 
 router.get('/', async (req, res) => {
