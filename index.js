@@ -10,6 +10,11 @@ const upload = require(__dirname + '/modules/upload-images');
 const session = require('express-session');
 const moment = require('moment-timezone');
 
+const {
+    toDateString,
+    toDatetimeString,
+} = require(__dirname + '/modules/date-tools');
+
 // sessionStore
 const db = require(__dirname + '/modules/mysql-connect');
 const MysqlStore = require('express-mysql-session')(session);
@@ -41,7 +46,11 @@ app.use(session({
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use((req, res, next) => {
-    res.locals.shinder = '哈囉';
+    // res.locals.shinder = '哈囉';
+
+    // template helper functions
+    res.locals.toDateString = toDateString;
+    res.locals.toDatetimeString = toDatetimeString;
     next();
 });
 
