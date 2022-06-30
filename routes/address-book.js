@@ -118,7 +118,8 @@ router.post('/add', upload.none(), async (req, res)=>{
     */
 
     const sql = "INSERT INTO `address_book` SET ?";
-    const insertData = {...req.body, created_at: new Date()};
+    const birthday = req.body.birthday || null;
+    const insertData = {...req.body, birthday, created_at: new Date()};
     const [result] = await db.query(sql, [insertData]);
 
     // {"fieldCount":0,"affectedRows":1,"insertId":1113,"info":"","serverStatus":2,"warningStatus":0}
