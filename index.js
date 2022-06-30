@@ -73,7 +73,7 @@ app.route('/try-post-form')
         const { email, password, name } = req.body;
         res.render('try-post-form', { email, password, name });
     });
-// 欄位名稱 avatar middleware
+// 欄位名稱 avatar middleware,其他欄位的資料會放在req.body裡一起傳過來
 app.post('/try-upload', upload.single('avatar'), (req, res) => {
     res.json(req.file);
 });
