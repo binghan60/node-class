@@ -35,10 +35,12 @@ app.set('case sensitive routing', true);
 // Top-level middlewares
 app.use(session({
     saveUninitialized: false,
+    // 沒變更要不要回存
     resave: false,
+    // 加密用字串
     secret: 'dkfdl85493igdfigj9457394573irherer',
-    // cookie存活時間
     store: sessionStore,
+    // cookie存活時間
     cookie: {
         maxAge: 1800000, // 30 min
     }
@@ -47,7 +49,7 @@ app.use(session({
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use((req, res, next) => {
-    // res.locals.shinder = '哈囉';
+    res.locals.shinder = '哈囉';
 
     // template helper functions
     res.locals.toDateString = toDateString;
@@ -102,7 +104,6 @@ app.get(['/aaa', '/bbb'], (req, res) => {
     res.send({ url: req.url, code: 'array' });
 });
 
-
 app.get('/try-json', (req, res) => {
     // require會自動jsonParse轉成array    
     const data = require(__dirname + '/data/data01');
@@ -111,6 +112,7 @@ app.get('/try-json', (req, res) => {
     res.locals.rows = data;
     res.render('try-json');
 });
+
 
 app.get('/try-moment', (req, res) => {
     const fm = 'YYYY-MM-DD HH:mm:ss';
