@@ -6,6 +6,7 @@ const {
     toDatetimeString,
 } = require(__dirname + '/../modules/date-tools');
 const moment = require('moment-timezone');
+const Joi = require('joi');
 const upload = require(__dirname + '/../modules/upload-images')
 
 
@@ -89,7 +90,21 @@ router.get('/add', async (req, res)=>{
 });
 
 router.post('/add', upload.none(), async (req, res)=>{
-    res.json(req.body);
+    const schema = Joi.object({
+        name: Joi.string()
+            .min(3)
+            .required()
+            .label('姓名必填'),
+        email: Joi.string()
+            .email()
+            .required(),
+        mobile: Joi.string(),
+        birthday: Joi.string(),
+        address: Joi.string(),
+    });
+
+    res.json( schema.validate(req.body, {abortEarly: false}) );
+
 });
 
 router.get('/', async (req, res) => {
