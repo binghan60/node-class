@@ -39,34 +39,69 @@
         </div>
 
         <%- include('../parts/scripts') %>
-            <script>
-                function sendForm(event) {
-                    event.preventDefault();
-
-                    const fd = new FormData(document.form1);
-
-                    const dataObj = {};
-                    for (let i of fd.entries()) {
-                        console.log(i);
-
-                        dataObj[i[0]] = i[1];
-                    }
-                    console.log(dataObj); // 轉換成物件
-
-                    const usp = new URLSearchParams(fd);
-
-                    // 轉換 urlencoded
-                    console.log(usp.toString());
-
-                    fetch('', {
-                        method: 'POST',
-                        body: fd
-                    })
-                        .then(r => r.json())
-                        .then(obj => {
-                            console.log(obj)
-                        })
+        <script>
+            function sendForm(event){
+                event.preventDefault();
+        
+                const fd = new FormData(document.form1);
+        
+        
+                const dataObj = {};
+                for(let i of fd.entries()){
+                    console.log(i);
+        
+                    dataObj[i[0]] = i[1];
                 }
-
-            </script>
+                console.log(dataObj); // 轉換成物件
+        
+                const usp = new URLSearchParams(fd);
+        
+                /*
+                // 傳送 JSON
+                fetch('', {
+                    method: 'POST',
+                    body: JSON.stringify(dataObj),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(r=>r.json())
+                .then(obj=>{
+                    console.log(obj)
+                })
+                */
+        
+        
+                /*
+                // 轉換 urlencoded
+                console.log(usp.toString());
+                fetch('', {
+                    method: 'POST',
+                    body: usp.toString(),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(r=>r.json())
+                .then(obj=>{
+                    console.log(obj)
+                })
+                */
+        
+        
+        
+                
+                // multipart-formdata
+                fetch('', {
+                    method: 'POST',
+                    body: fd
+                })
+                .then(r=>r.json())
+                .then(obj=>{
+                    console.log(obj)
+                })
+                
+            }
+        
+        </script>
 <%- include('../parts/html-foot') %>
