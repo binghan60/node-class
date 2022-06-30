@@ -99,12 +99,30 @@ router.post('/add', upload.none(), async (req, res)=>{
             .email()
             .required(),
         mobile: Joi.string(),
-        birthday: Joi.string(),
+        birthday: Joi.any(),
         address: Joi.string(),
     });
 
-    res.json( schema.validate(req.body, {abortEarly: false}) );
+    // 自訂訊息
+    // https://stackoverflow.com/questions/48720942/node-js-joi-how-to-display-a-custom-error-messages
 
+    console.log( schema.validate(req.body, {abortEarly: false}) );
+    /*
+    const sql = "INSERT INTO `address_book`(`name`, `email`, `mobile`, `birthday`, `address`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())";
+    const {name, email, mobile, birthday, address} = req.body;
+    const [result] = await db.query(sql, [name, email, mobile, birthday, address]);
+
+    // affectedRows受影響的列 等同rowCount
+    // {"fieldCount":0,"affectedRows":1,"insertId":1113,"info":"","serverStatus":2,"warningStatus":0}
+    res.json(result);
+    */
+
+    const sql = "INSERT INTO `address_book` SET ?";
+    const insertData = {...req.body, created_at: new Date()};
+    const [result] = await db.query(sql, [insertData]);
+
+    // {"fieldCount":0,"affectedRows":1,"insertId":1113,"info":"","serverStatus":2,"warningStatus":0}
+    res.json(result);
 });
 
 router.get('/', async (req, res) => {
