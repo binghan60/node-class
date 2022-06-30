@@ -49,6 +49,22 @@ res.redirect()
 
 
 
+------------------------------------
+cart table 購物車的資料表參考
+----------------
+PK
+
+item_type: product, event, ticket
+
+user_id
+
+item_id :12
+
+quantity
+
+created_at
+------------------------------------
+
 
 
 

@@ -9,6 +9,7 @@ const upload = require(__dirname + '/modules/upload-images');
 
 const session = require('express-session');
 const moment = require('moment-timezone');
+const axios = require('axios');
 
 const {
     toDateString,
@@ -34,10 +35,12 @@ app.set('case sensitive routing', true);
 // Top-level middlewares
 app.use(session({
     saveUninitialized: false,
+    // 沒變更要不要回存
     resave: false,
+    // 加密用字串
     secret: 'dkfdl85493igdfigj9457394573irherer',
-    // cookie存活時間
     store: sessionStore,
+    // cookie存活時間
     cookie: {
         maxAge: 1800000, // 30 min
     }
@@ -46,7 +49,7 @@ app.use(session({
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use((req, res, next) => {
-    // res.locals.shinder = '哈囉';
+    res.locals.shinder = '哈囉';
 
     // template helper functions
     res.locals.toDateString = toDateString;
@@ -73,7 +76,7 @@ app.route('/try-post-form')
         const { email, password, name } = req.body;
         res.render('try-post-form', { email, password, name });
     });
-// 欄位名稱 avatar middleware
+// 欄位名稱 avatar middleware,其他欄位的資料會放在req.body裡一起傳過來
 app.post('/try-upload', upload.single('avatar'), (req, res) => {
     res.json(req.file);
 });
@@ -101,7 +104,6 @@ app.get(['/aaa', '/bbb'], (req, res) => {
     res.send({ url: req.url, code: 'array' });
 });
 
-
 app.get('/try-json', (req, res) => {
     // require會自動jsonParse轉成array    
     const data = require(__dirname + '/data/data01');
@@ -110,6 +112,7 @@ app.get('/try-json', (req, res) => {
     res.locals.rows = data;
     res.render('try-json');
 });
+
 
 app.get('/try-moment', (req, res) => {
     const fm = 'YYYY-MM-DD HH:mm:ss';
@@ -144,6 +147,14 @@ app.get('/try-session', (req, res) => {
 
 app.use('/address-book', require(__dirname + '/routes/address-book'));
 
+app.get('/yahoo', async (req, res)=>{
+    axios.get('https://tw.yahoo.com/')
+    .then(function (response) {
+      // handle success
+        console.log(response);
+        res.send(response.data);
+    })
+});
 
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
@@ -156,6 +167,7 @@ app.get("/", (req, res) => {
 app.use(express.static("public"));
 // 網址列掛在虛擬bootstrap/再找
 app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
+app.use("/Joi", express.static("node_modules/Joi/dist"));
 // ------------------404------------------
 // use接收所有的方法,querystring亂打都會來這裡
 app.use((req, res) => {
