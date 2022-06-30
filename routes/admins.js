@@ -1,12 +1,15 @@
 const express = require('express');
+// index require過express了,這邊再一次不會浪費記憶體,會丟原來的參照
+
 
 const router = express.Router(); // 建立 router 物件
 
 router.get('/r1/:action?/:id?', (req, res) => {
     res.json({
-        url: req.url,
-        baseUrl: req.baseUrl,
-        originalUrl: req.originalUrl,
+
+        baseUrl: req.baseUrl,// /admins
+        url: req.url, // /r1/abc/123
+        originalUrl: req.originalUrl, // /admins/r1/abc/123
         params: req.params,
         code: 'admins.js',
     });

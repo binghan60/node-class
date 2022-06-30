@@ -25,9 +25,9 @@ const sessionStore = new MysqlStore({}, db);
 // const app = require("express")();
 // app=呼叫function
 const app = express();
-// 區分大小寫
 
 app.set("view engine", "ejs");
+// 區分大小寫
 app.set('case sensitive routing', true);
 
 // 頂級路由設在最上層,所有資料都會經過這裡
@@ -82,7 +82,7 @@ app.post('/try-uploads', upload.array('photos'), (req, res) => {
     res.json(req.files);
 });
 
-// 越寬鬆的放越下面,不然會一開始就吃掉全部
+// 有:action跟:id就一定要有值,直接去/try-params1會404,有加問號才可以可有可無
 app.get('/try-params1/:action/:id', (req, res) => {
     res.json({ code: 2, params: req.params });
 })
@@ -93,7 +93,7 @@ app.get('/try-params1/:action?/:id?', (req, res) => {
     res.json({ code: 1, params: req.params });
 });
 
-//  /後有包含HI就可以
+//  跳脫設定路由,/後有包含HI就可以
 app.get(/^\/hi\/?/i, (req, res) => {
     res.send({ url: req.url });
 });
@@ -127,7 +127,7 @@ app.get('/try-moment', (req, res) => {
 
 
 const adminsRouter = require(__dirname + '/routes/admins');
-// prefix 前綴路徑
+// prefix 前綴路徑admins
 app.use('/admins', adminsRouter);
 app.use(adminsRouter);
 // app.use('/admins', require(__dirname + '/routes/admins'));
