@@ -31,6 +31,20 @@ router.post('/', async (req, res)=>{
         output.error = '參數不足';
         return res.json(output);
     }
+
+    if( +req.body.quantity <1){
+        output.error = '數量不能小於 1';
+        return res.json(output);
+    }
+
+    // 判斷該商品是否已經加入購物車
+    const sql3 = `SELECT COUNT(1) num FROM carts WHERE product_id=? AND user_id=?`;
+    const [[{num}]] = await db.query(sql3, [req.body.product_id, fake_user]);
+    if(num>0){
+        output.error = '購物車內已經有這項商品';
+        return res.json(output);
+    }
+
     const sql = `SELECT * FROM products WHERE sid=?`;
     const [r1] = await db.query(sql, [req.body.product_id]);
     if(!r1.length){
@@ -58,7 +72,13 @@ router.put('/', async (req, res)=>{
     // product_id, quantity
 });
 router.delete('/', async (req, res)=>{
+
     // product_id
+    const sql = "DELETE FROM carts WHERE user_id=? AND product_id=?";
+    await db.query(sql, [fake_user, req.body.product_id]);
+
+    res.json(await getUserCart(fake_user));
+
 });
 
 module.exports = router;
