@@ -35,16 +35,16 @@ const getListHandler = async (req, res) => {
         output.query.search = search;
     }
 
-    if(beginDate){
+    if (beginDate) {
         const mo = moment(beginDate);
-        if(mo.isValid()){
+        if (mo.isValid()) {
             where += ` AND birthday >= '${mo.format('YYYY-MM-DD')}' `;
             output.query.beginDate = mo.format('YYYY-MM-DD');
         }
     }
-    if(endDate){
+    if (endDate) {
         const mo = moment(endDate);
-        if(mo.isValid()){
+        if (mo.isValid()) {
             where += ` AND birthday <= '${mo.format('YYYY-MM-DD')}' `;
             output.query.endDate = mo.format('YYYY-MM-DD');
         }
@@ -85,11 +85,26 @@ const getListHandler = async (req, res) => {
     return output;
 };
 
-router.get('/add', async (req, res)=>{
+router.use((req, res, next) => {
+    /*
+    if(! req.session.admin){
+        return res.redirect('/');
+    }
+    */
+    next();
+});
+
+router.get('/add', async (req, res) => {
+    if (!req.session.admin) {
+        return res.redirect('/');
+    }
     res.render('address-book/add');
 });
 
-router.post('/add', upload.none(), async (req, res)=>{
+router.post('/add', upload.none(), async (req, res) => {
+    if (!req.session.admin) {
+        return res.json({ success: false, error: '請先登入' });
+    }
     const schema = Joi.object({
         name: Joi.string()
             .min(3)
@@ -106,7 +121,7 @@ router.post('/add', upload.none(), async (req, res)=>{
     // 自訂訊息
     // https://stackoverflow.com/questions/48720942/node-js-joi-how-to-display-a-custom-error-messages
 
-    console.log( schema.validate(req.body, {abortEarly: false}) );
+    console.log(schema.validate(req.body, { abortEarly: false }));
     /*
     const sql = "INSERT INTO `address_book`(`name`, `email`, `mobile`, `birthday`, `address`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())";
     const {name, email, mobile, birthday, address} = req.body;
@@ -119,7 +134,7 @@ router.post('/add', upload.none(), async (req, res)=>{
 
     const sql = "INSERT INTO `address_book` SET ?";
     const birthday = req.body.birthday || null;
-    const insertData = {...req.body, birthday, created_at: new Date()};
+    const insertData = { ...req.body, birthday, created_at: new Date() };
     const [result] = await db.query(sql, [insertData]);
 
     // {"fieldCount":0,"affectedRows":1,"insertId":1113,"info":"","serverStatus":2,"warningStatus":0}
@@ -135,8 +150,13 @@ router.get('/', async (req, res) => {
         case 420:
             return res.redirect(`?page=${output.totalPages}`);
             break;
+    }    
+    if (!req.session.admin) {
+        res.render('address-book/main-noadmin', output);
+    } else {
+        res.render('address-book/main', output);
     }
-    res.render('address-book/main', output);
+
 });
 router.get('/api', async (req, res) => {
     const output = await getListHandler(req, res);

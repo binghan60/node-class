@@ -4,12 +4,15 @@ require("dotenv").config();
 const express = require("express");
 const multer = require('multer');
 // multer檔案上傳,dest目的地
-// const upload = multer({ dest: 'tmp-uploads' });因為藥用storage跟filefilter所以改用自己寫的
+// const upload = multer({ dest: 'tmp-uploads' });因為要用storage跟filefilter所以改用自己寫的
 const upload = require(__dirname + '/modules/upload-images');
 
 const session = require('express-session');
 const moment = require('moment-timezone');
 const axios = require('axios');
+const bcrypt = require('bcryptjs');
+
+
 
 const {
     toDateString,
@@ -20,7 +23,7 @@ const {
 const db = require(__dirname + '/modules/mysql-connect');
 const MysqlStore = require('express-mysql-session')(session);
 const sessionStore = new MysqlStore({}, db);
-
+const cors = require('cors')
 
 // 也可以這樣寫
 // const app = require("express")();
@@ -33,6 +36,16 @@ app.set('case sensitive routing', true);
 
 // 頂級路由設在最上層,所有資料都會經過這裡
 // Top-level middlewares
+const corsOptions = {
+    credentials: true,
+    origin: (origin, cb) => {
+        console.log({ origin });
+        //全部允許
+        cb(null, true);
+    }
+};
+
+app.use(cors(corsOptions));
 app.use(session({
     saveUninitialized: false,
     // 沒變更要不要回存
@@ -54,6 +67,7 @@ app.use((req, res, next) => {
     // template helper functions
     res.locals.toDateString = toDateString;
     res.locals.toDatetimeString = toDatetimeString;
+    res.locals.session = req.session;
     next();
 });
 
@@ -147,14 +161,58 @@ app.get('/try-session', (req, res) => {
 
 app.use('/address-book', require(__dirname + '/routes/address-book'));
 
-app.get('/yahoo', async (req, res)=>{
+app.get('/yahoo', async (req, res) => {
     axios.get('https://tw.yahoo.com/')
-    .then(function (response) {
-      // handle success
-        console.log(response);
-        res.send(response.data);
-    })
+        .then(function (response) {
+            // handle success
+            console.log(response);
+            res.send(response.data);
+        })
 });
+
+//登入
+app.route('/login')
+    .get(async (req, res) => {
+        res.render('login');
+    })
+    .post(async (req, res) => {
+        const output = {
+            success: false,
+            error: '',
+            code: 0,
+        };
+        const sql = "SELECT * FROM admins WHERE account=?";
+        const [r1] = await db.query(sql, [req.body.account]);
+
+        if (!r1.length) {
+            // 帳號錯誤
+            output.code = 401;
+            output.error = '帳密錯誤'
+            return res.json(output)
+        }
+        //const row = r1[0];
+
+        output.success = await bcrypt.compare(req.body.password, r1[0].pass_hash);
+        if (!output.success) {
+            // 密碼錯誤
+            output.code = 402;
+            output.error = '帳密錯誤'
+        } else {
+            req.session.admin = {
+                sid: r1[0].sid,
+                account: r1[0].account,
+            };
+        }
+
+        res.json(output);
+    });
+
+// 登出
+app.get("/logout", (req, res) => {
+    delete req.session.admin;
+    res.redirect("/");
+});
+
 
 // 樣板(ejs)要用render 改成從views找
 // 沒設定檔頭預設HTML
