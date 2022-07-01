@@ -11,8 +11,7 @@ const pool = mysql.createPool({
     waitForConnections: true,
     // 最大連線
     connectionLimit: 5,
-    // 排隊
-
+    // 限制排隊數量,0無限制
     queueLimit: 0,
 });
 // 除錯用的資訊

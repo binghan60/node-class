@@ -30,6 +30,7 @@ const cors = require('cors')
 // app=呼叫function
 const app = express();
 
+// 建立view引擎
 app.set("view engine", "ejs");
 // 區分大小寫
 app.set('case sensitive routing', true);
@@ -50,8 +51,8 @@ app.use(session({
     saveUninitialized: false,
     // 沒變更要不要回存
     resave: false,
-    // 加密用字串
-    secret: 'dkfdl85493igdfigj9457394573irherer',
+    // 加密cookie用字串
+    secret: 'milkcat',
     store: sessionStore,
     // cookie存活時間
     cookie: {
@@ -122,7 +123,7 @@ app.get('/try-json', (req, res) => {
     // require會自動jsonParse轉成array    
     const data = require(__dirname + '/data/data01');
     console.log(data);
-    // rows掛到locals
+    // rows掛到locals下前端就有這個變數了
     res.locals.rows = data;
     res.render('try-json');
 });
@@ -135,6 +136,7 @@ app.get('/try-moment', (req, res) => {
 
     res.json({
         m1: m1.format(fm),
+        // tz切換時區
         m1a: m1.tz('Europe/London').format(fm),
         m2: m2.format(fm),
         m2a: m2.tz('Europe/London').format(fm),
@@ -151,6 +153,7 @@ app.use(adminsRouter);
 
 
 app.get('/try-session', (req, res) => {
+    // 如果有my_var就顯示,不然就給0
     req.session.my_var = req.session.my_var || 0;
     req.session.my_var++;
     res.json({
