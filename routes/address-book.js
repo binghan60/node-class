@@ -12,6 +12,7 @@ const upload = require(__dirname + '/../modules/upload-images')
 
 const router = express.Router(); // 建立 router 物件
 
+// getListHandler變工具了,內部先處理最後再根據處理完資料用switch case跳轉
 const getListHandler = async (req, res) => {
     let output = {
         perPage: 10,
@@ -25,26 +26,30 @@ const getListHandler = async (req, res) => {
     };
     // 從網址抓querystring , 沒有設定就給1 +號轉數值
     let page = +req.query.page || 1;
-
     let search = req.query.search || '';
     let beginDate = req.query.beginDate || '';
     let endDate = req.query.endDate || '';
+    // 預設進到頁面是WHERE 1 全部顯示 前後一定要空格
     let where = ' WHERE 1 ';
-    // 跳脫防攻擊
+    // 如果search有東西才處理,    跳脫防攻擊
     if (search) {
         where += ` AND name LIKE ${db.escape('%' + search + '%')} `;
         output.query.search = search;
     }
 
     if (beginDate) {
+        // 檢查日期格式
         const mo = moment(beginDate);
+        // if日期格式合法才往下
         if (mo.isValid()) {
+            // format直接轉換格式
             where += ` AND birthday >= '${mo.format('YYYY-MM-DD')}' `;
             output.query.beginDate = mo.format('YYYY-MM-DD');
         }
     }
     if (endDate) {
         const mo = moment(endDate);
+                // if格式合法才往下
         if (mo.isValid()) {
             where += ` AND birthday <= '${mo.format('YYYY-MM-DD')}' `;
             output.query.endDate = mo.format('YYYY-MM-DD');
@@ -78,7 +83,7 @@ const getListHandler = async (req, res) => {
         const sql02 = `SELECT * FROM address_book ${where} ORDER BY sid DESC LIMIT ${(page - 1) * output.perPage}, ${output.perPage}`;
         const [r2] = await db.query(sql02);
         // 轉換日期格式
-        // r2.forEach(el => el.birthday = toDateString(el.birthday));
+        r2.forEach(el => el.birthday = toDateString(el.birthday));
         output.rows = r2;
     }
 
@@ -147,13 +152,15 @@ router.post('/add', upload.none(), async (req, res) => {
 router.get('/', async (req, res) => {
     const output = await getListHandler(req, res);
     switch (output.code) {
+        // 執行完上面的,如果output裡的code是410就轉向
         case 410:
             return res.redirect(`?page=1`);
             break;
+        // 執行完上面的,如果output裡的code是420就轉向
         case 420:
             return res.redirect(`?page=${output.totalPages}`);
             break;
-    }    
+    }
     if (!req.session.admin) {
         res.render('address-book/main-noadmin', output);
     } else {
