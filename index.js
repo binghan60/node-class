@@ -22,6 +22,8 @@ const {
 // sessionStore
 const db = require(__dirname + '/modules/mysql-connect');
 const MysqlStore = require('express-mysql-session')(session);
+// 官方文件const sessionStore = new MysqlStore(option);option是連線設定檔
+// 第一個參數連線設定,第二個參數連線物件
 const sessionStore = new MysqlStore({}, db);
 const cors = require('cors')
 

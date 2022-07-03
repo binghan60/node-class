@@ -14,7 +14,7 @@ const pool = mysql.createPool({
     // 限制排隊數量,0無限制
     queueLimit: 0,
 });
-// 除錯用的資訊
+// 除錯用的資訊,連線時顯示
 console.log({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

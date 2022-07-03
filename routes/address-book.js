@@ -23,6 +23,7 @@ const getListHandler = async (req, res) => {
         query: {},
         rows: []
     };
+    // 從網址抓querystring , 沒有設定就給1 +號轉數值
     let page = +req.query.page || 1;
 
     let search = req.query.search || '';
@@ -63,6 +64,7 @@ const getListHandler = async (req, res) => {
     const sql01 = `SELECT COUNT(1) totalRows FROM address_book ${where}`;
     const [[{ totalRows }]] = await db.query(sql01);
     let totalPages = 0;
+    // totalRows有資料再往下做
     if (totalRows) {
         totalPages = Math.ceil(totalRows / output.perPage);
         // 頁碼大於總頁碼轉向最大頁
@@ -75,12 +77,13 @@ const getListHandler = async (req, res) => {
         // 取得每一頁的資料
         const sql02 = `SELECT * FROM address_book ${where} ORDER BY sid DESC LIMIT ${(page - 1) * output.perPage}, ${output.perPage}`;
         const [r2] = await db.query(sql02);
-        r2.forEach(el => el.birthday = toDateString(el.birthday));
+        // 轉換日期格式
+        // r2.forEach(el => el.birthday = toDateString(el.birthday));
         output.rows = r2;
     }
 
     output.code = 200;
-    // 展開設定每次都複製新資料進去output
+    // 展開設定 沒列出的資料保留原本的 ,有列出的更新
     output = { ...output, page, totalRows, totalPages };
     return output;
 };

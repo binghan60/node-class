@@ -9,5 +9,5 @@ const db = require(__dirname + '/../modules/mysql-connect');
     console.log(results);
     // 看看fields是什麼
     // console.log(fields);
-    process.exit();  // 結束行程
+    process.exit();  // promise跑完後結束行程
 })();
