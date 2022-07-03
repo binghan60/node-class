@@ -101,14 +101,15 @@ router.use((req, res, next) => {
     */
     next();
 });
-
+// express預設可處理URLencoded跟JSON
 router.get('/add', async (req, res) => {
     if (!req.session.admin) {
         return res.redirect('/');
     }
     res.render('address-book/add');
 });
-
+// upload.none要解析multipleformdata但是不要上傳
+// 不管是urlencoded或JSON都會傳到req.body下
 router.post('/add', upload.none(), async (req, res) => {
     if (!req.session.admin) {
         return res.json({ success: false, error: '請先登入' });
