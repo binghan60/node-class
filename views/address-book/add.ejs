@@ -70,7 +70,6 @@
         });
         console.log( schema.validate(dataObj, {abortEarly: false}) );
         
-                const usp = new URLSearchParams(fd);
         
                 /*
                 // 傳送 JSON
@@ -87,9 +86,10 @@
                 })
                 */
         
-        
+                const usp = new URLSearchParams(fd);
                 /*
                 // 轉換 urlencoded
+
                 console.log(usp.toString());
                 fetch('', {
                     method: 'POST',
@@ -103,11 +103,13 @@
                     console.log(obj)
                 })
                 */
-        
+        // usp.toString
+        // name=123&email=12345
         
         
                 
                 // multipart-formdata
+                // 沒寫等於送給自己,router有upload功能直接塞進來就好
                 fetch('', {
                     method: 'POST',
                     body: fd
@@ -123,3 +125,4 @@
 <%- include('../parts/html-foot') %>
 
 <!-- express預設可處理URLencoded跟JSON -->
+<!-- 這裡的檔頭不是multipartformdata,經過upload不會有作用 -->
