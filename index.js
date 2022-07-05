@@ -232,7 +232,7 @@ app.get("/", (req, res) => {
 app.use(express.static("public"));
 // 網址列掛在虛擬bootstrap/再找
 app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
-app.use("/Joi", express.static("node_modules/Joi/dist"));
+app.use("/joi", express.static("node_modules/joi/dist"));
 // ------------------404------------------
 // use接收所有的方法,querystring亂打都會來這裡
 app.use((req, res) => {
