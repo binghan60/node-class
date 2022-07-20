@@ -171,6 +171,7 @@ router.get('/', async (req, res) => {
 });
 router.get('/api', async (req, res) => {
     const output = await getListHandler(req, res);
+    output.payload = res.locals.payload;
     res.json(output);
 });
 
