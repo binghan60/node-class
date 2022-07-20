@@ -11,7 +11,7 @@ const session = require('express-session');
 const moment = require('moment-timezone');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
-
+const jwt = require('jsonwebtoken');
 
 
 const {
@@ -213,6 +213,53 @@ app.route('/login')
 
         res.json(output);
     });
+
+    // JWT登入
+    app.route('/login-jwt')
+    .get(async (req, res)=>{
+        res.render('login-jwt');
+    })
+    .post(async (req, res)=>{
+        const output = {
+            success: false,
+            error: '',
+            code: 0,
+            data: {},
+        };
+        const sql = "SELECT * FROM admins WHERE account=?";
+        const [r1] = await db.query(sql, [req.body.account]);
+
+        if(! r1.length){
+            // 帳號錯誤
+            output.code = 401;
+            output.error = '帳密錯誤'
+            return res.json(output)
+        }
+        //const row = r1[0];
+
+        output.success = await bcrypt.compare(req.body.password, r1[0].pass_hash);
+        if(! output.success){
+            // 密碼錯誤
+            output.code = 402;
+            output.error = '帳密錯誤'
+        } else {
+            // 成功登入
+            const token = jwt.sign({
+                sid: r1[0].sid,
+                account: r1[0].account,
+            }, process.env.JWT_SECRET);
+
+
+            output.data = {
+                token,
+                account: r1[0].account,
+            };
+
+        }
+
+        res.json(output);
+    });
+
 
 // 登出
 app.get("/logout", (req, res) => {
