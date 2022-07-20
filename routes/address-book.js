@@ -118,7 +118,7 @@ router.post('/add', upload.none(), async (req, res) => {
         name: Joi.string()
             .min(3)
             .required()
-            .label('姓名必填'),
+            .label('姓名必填'),//將name欄位替換成label
         email: Joi.string()
             .email()
             .required(),
@@ -176,3 +176,5 @@ router.get('/api', async (req, res) => {
 
 
 module.exports = router;
+
+
