@@ -258,6 +258,7 @@ app
       );
 
       output.data = {
+        sid: r1[0].sid,
         token,
         account: r1[0].account,
       };
