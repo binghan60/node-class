@@ -72,10 +72,10 @@ app.use((req, res, next) => {
   res.locals.session = req.session;
 
   const auth = req.get("Authorization");
-  res.locals.payload = null;
+  res.locals.loginUser = null;
   if (auth && auth.indexOf("Bearer ") === 0) {
     const token = auth.slice(7);
-    res.locals.payload = jwt.verify(token, process.env.JWT_SECRET);
+    res.locals.loginUser = jwt.verify(token, process.env.JWT_SECRET);
   }
 
   next();
